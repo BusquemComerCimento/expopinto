@@ -1,0 +1,152 @@
+CREATE DATABASE IF NOT EXISTS cls_enlatados
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE cls_enlatados;
+
+CREATE TABLE users (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(120) NOT NULL,
+  email VARCHAR(160) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE categories (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(80) NOT NULL UNIQUE
+) ENGINE=InnoDB;
+
+CREATE TABLE products (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  category_id INT UNSIGNED NOT NULL,
+  name VARCHAR(150) NOT NULL,
+  description TEXT,
+  price DECIMAL(10,2) NOT NULL,
+  sku VARCHAR(60) NOT NULL UNIQUE,
+  stock INT UNSIGNED NOT NULL DEFAULT 0,
+  accent VARCHAR(40) DEFAULT 'preto',
+  featured TINYINT(1) NOT NULL DEFAULT 0,
+  active TINYINT(1) NOT NULL DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_products_category FOREIGN KEY (category_id) REFERENCES categories(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE addresses (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NOT NULL,
+  zip_code VARCHAR(12) NOT NULL,
+  address_line VARCHAR(180) NOT NULL,
+  number VARCHAR(30) NOT NULL,
+  city VARCHAR(100) NOT NULL,
+  state VARCHAR(2),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_addresses_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE carts (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NULL,
+  status ENUM('active','converted','abandoned') NOT NULL DEFAULT 'active',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_carts_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE cart_items (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  cart_id BIGINT UNSIGNED NOT NULL,
+  product_id BIGINT UNSIGNED NOT NULL,
+  quantity INT UNSIGNED NOT NULL DEFAULT 1,
+  unit_price DECIMAL(10,2) NOT NULL,
+  UNIQUE KEY uq_cart_product (cart_id, product_id),
+  CONSTRAINT fk_cart_items_cart FOREIGN KEY (cart_id) REFERENCES carts(id) ON DELETE CASCADE,
+  CONSTRAINT fk_cart_items_product FOREIGN KEY (product_id) REFERENCES products(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE orders (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NULL,
+  address_id BIGINT UNSIGNED NULL,
+  order_code VARCHAR(40) NOT NULL UNIQUE,
+  status ENUM('pending','paid','processing','shipped','delivered','cancelled') NOT NULL DEFAULT 'pending',
+  subtotal DECIMAL(10,2) NOT NULL DEFAULT 0,
+  shipping DECIMAL(10,2) NOT NULL DEFAULT 0,
+  total DECIMAL(10,2) NOT NULL DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_orders_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+  CONSTRAINT fk_orders_address FOREIGN KEY (address_id) REFERENCES addresses(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE order_items (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  order_id BIGINT UNSIGNED NOT NULL,
+  product_id BIGINT UNSIGNED NOT NULL,
+  product_name VARCHAR(150) NOT NULL,
+  quantity INT UNSIGNED NOT NULL,
+  unit_price DECIMAL(10,2) NOT NULL,
+  CONSTRAINT fk_order_items_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+  CONSTRAINT fk_order_items_product FOREIGN KEY (product_id) REFERENCES products(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE payments (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  order_id BIGINT UNSIGNED NOT NULL,
+  method ENUM('pix','credit_card','debit_card') NOT NULL,
+  status ENUM('pending','approved','declined','refunded') NOT NULL DEFAULT 'pending',
+  transaction_code VARCHAR(120),
+  amount DECIMAL(10,2) NOT NULL,
+  paid_at TIMESTAMP NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_payments_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE contact_messages (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(120) NOT NULL,
+  email VARCHAR(160) NOT NULL,
+  message TEXT NOT NULL,
+  status ENUM('new','read','answered') NOT NULL DEFAULT 'new',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+INSERT INTO categories (name) VALUES
+  ('Camisetas'),
+  ('Calças'),
+  ('Moletons'),
+  ('Acessórios');
+
+INSERT INTO products (category_id, name, description, price, sku, stock, accent, featured) VALUES
+  (1, 'Camiseta Lata 01', 'Camiseta de algodão com arte inspirada em rótulo de lata vintage.', 89.90, 'CLS-CAM-001', 50, 'vermelha', 1),
+  (2, 'Cargo Ferrugem', 'Calça cargo de modelagem ampla para uso diário.', 179.90, 'CLS-CAL-002', 30, 'escura', 1),
+  (3, 'Moletom Turno 06', 'Moletom encorpado com identidade gráfica CLS.', 219.90, 'CLS-MOL-003', 25, 'creme', 1),
+  (4, 'Boné Lacre', 'Boné de aba curva com aplicação discreta da marca.', 69.90, 'CLS-ACE-004', 40, 'preto', 1),
+  (1, 'Camiseta Expiração', 'Camiseta gráfica de edição limitada.', 94.90, 'CLS-CAM-005', 40, 'vinho', 0),
+  (2, 'Calça Serviço', 'Calça reta com bolsos utilitários.', 189.90, 'CLS-CAL-006', 20, 'oliva', 0),
+  (3, 'Moletom Válvula', 'Moletom pesado com detalhe frontal.', 229.90, 'CLS-MOL-007', 18, 'caramelo', 0),
+  (4, 'Meia 24H', 'Meia cano médio para uso diário.', 39.90, 'CLS-ACE-008', 60, 'branca', 0),
+  (1, 'Camiseta Contrabando', 'Camiseta oversized com lettering frontal.', 99.90, 'CLS-CAM-009', 35, 'preta', 0),
+  (2, 'Calça Lote 2', 'Calça de corte confortável e tecido resistente.', 169.90, 'CLS-CAL-010', 24, 'grafite', 0),
+  (3, 'Moletom Lacre Vermelho', 'Moletom pesado com acabamento vermelho.', 239.90, 'CLS-MOL-011', 16, 'vermelha', 0),
+  (4, 'Shoulder Bag 1999', 'Bolsa transversal compacta para o dia a dia.', 109.90, 'CLS-ACE-012', 22, 'preta', 0);
+
+-- Usuário de teste: a senha abaixo é apenas um hash de demonstração.
+-- Em produção, gere hashes com bcrypt/Argon2 no backend.
+INSERT INTO users (name, email, password_hash) VALUES
+  ('Cliente Demo', 'demo@clsenlatados.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3RoHj5h6q7QqVg8K2yV2xK2mS');
+
+CREATE VIEW product_catalog AS
+SELECT
+  p.id,
+  p.name,
+  c.name AS category,
+  p.description,
+  p.price,
+  p.sku,
+  p.stock,
+  p.accent,
+  p.featured,
+  p.active
+FROM products p
+JOIN categories c ON c.id = p.category_id
+WHERE p.active = 1;

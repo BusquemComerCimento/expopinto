@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CLS Enlatados — moda urbana com atitude vintage." />
+  <title>CLS Enlatados — Moda Urbana</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="src/style.css" />
+</head>
+<body>
+  <div class="announcement">ENVIO GRÁTIS A PARTIR DE R$ 299 · NOVA COLEÇÃO NO AR</div>
+
+  <header class="site-header" id="topo">
+    <a class="brand" href="#inicio" aria-label="CLS Enlatados início">
+      <span class="brand-main">CLS</span>
+      <span class="brand-sub">ENLATADOS</span>
+    </a>
+
+    <nav class="main-nav" aria-label="Navegação principal">
+      <a href="#inicio">Início</a>
+      <a href="#catalogo">Catálogo</a>
+      <a href="#sobre">Sobre nós</a>
+      <a href="#contato">Contato</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="icon-btn" id="openSearch" aria-label="Abrir busca">⌕</button>
+      <button class="icon-btn" id="openAuth" aria-label="Entrar ou cadastrar">◉</button>
+      <button class="cart-btn" id="openCart" aria-label="Abrir carrinho">CARRINHO <span id="cartCount">0</span></button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="inicio">
+      <div class="hero-copy">
+        <p class="eyebrow">EDIÇÃO 06 / 2026</p>
+        <h1>Roupa com<br /><span>gosto de rua.</span></h1>
+        <p class="hero-text">Peças pesadas, cortes confortáveis e referências de embalagem vintage. Sem cara de catálogo genérico.</p>
+        <div class="hero-actions">
+          <a class="btn btn-red" href="#catalogo">VER COLEÇÃO</a>
+          <a class="btn btn-outline" href="#sobre">A MARCA</a>
+        </div>
+      </div>
+
+      <div class="hero-art" aria-label="Destaque da coleção">
+        <div class="can-shape can-back"></div>
+        <div class="can-shape can-front">
+          <span>CLS</span>
+          <small>ENLATADOS</small>
+          <strong>06</strong>
+          <i>URBAN / DAILY / RAW</i>
+        </div>
+        <div class="stamp">DESDE<br />2024</div>
+      </div>
+
+      <div class="hero-ticker">
+        <span>CLS ENLATADOS</span><span>URBAN GOODS</span><span>VESTE O QUE VOCÊ É</span><span>CLS ENLATADOS</span><span>URBAN GOODS</span>
+      </div>
+    </section>
+
+    <section class="featured" aria-labelledby="featured-title">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">SELEÇÃO DA CASA</p>
+          <h2 id="featured-title">Peças que seguram o look.</h2>
+        </div>
+        <a href="#catalogo" class="text-link">VER TUDO →</a>
+      </div>
+      <div class="product-grid" id="featuredGrid"></div>
+    </section>
+
+    <section class="catalogo" id="catalogo" aria-labelledby="catalog-title">
+      <div class="section-head catalog-head">
+        <div>
+          <p class="eyebrow">CATÁLOGO</p>
+          <h2 id="catalog-title">Sem frescura.</h2>
+        </div>
+        <div class="catalog-tools">
+          <div class="filter-tabs" id="filterTabs" role="tablist" aria-label="Categorias">
+            <button class="filter-tab active" data-category="Todos">Todos</button>
+            <button class="filter-tab" data-category="Camisetas">Camisetas</button>
+            <button class="filter-tab" data-category="Calças">Calças</button>
+            <button class="filter-tab" data-category="Moletons">Moletons</button>
+            <button class="filter-tab" data-category="Acessórios">Acessórios</button>
+          </div>
+          <label class="search-field">
+            <span>⌕</span>
+            <input id="catalogSearch" type="search" placeholder="Buscar peça..." />
+          </label>
+        </div>
+      </div>
+      <div class="product-grid" id="catalogGrid"></div>
+    </section>
+
+    <section class="manifesto" id="sobre">
+      <div class="manifesto-label">NOTA DA CASA</div>
+      <div class="manifesto-copy">
+        <p class="eyebrow">SOBRE A CLS</p>
+        <h2>Nasceu da vontade de fazer roupa que parece ter história antes mesmo de você vestir.</h2>
+        <p>A CLS Enlatados mistura estética de rua, tipografia de rótulo antigo e peças para uso diário. A graça está no contraste: acabamento bruto, comunicação direta e detalhes que parecem encontrados numa banca de outra década.</p>
+        <p>Menos “luxo silencioso”. Mais personalidade falando alto.</p>
+      </div>
+      <div class="manifesto-side">
+        <div><strong>06</strong><span>coleções/ano</span></div>
+        <div><strong>100%</strong><span>design próprio</span></div>
+        <div><strong>0</strong><span>cara de shopping</span></div>
+      </div>
+    </section>
+
+    <section class="contact" id="contato" aria-labelledby="contact-title">
+      <div>
+        <p class="eyebrow">FALE COM A GENTE</p>
+        <h2 id="contact-title">Tem dúvida? Manda.</h2>
+        <p>Atendimento de segunda a sexta, das 9h às 18h.</p>
+      </div>
+      <form id="contactForm" class="contact-form">
+        <input name="name" type="text" placeholder="Seu nome" required />
+        <input name="email" type="email" placeholder="Seu e-mail" required />
+        <textarea name="message" placeholder="O que você precisa saber?" rows="5" required></textarea>
+        <button class="btn btn-red" type="submit">ENVIAR MENSAGEM</button>
+        <div id="contactStatus" class="form-status" role="status"></div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-brand">CLS ENLATADOS</div>
+    <div class="footer-links">
+      <a href="#inicio">Instagram</a>
+      <a href="#contato">Atendimento</a>
+      <a href="#catalogo">Trocas e devoluções</a>
+      <a href="#topo">Voltar ao topo ↑</a>
+    </div>
+    <p>© 2026 CLS Enlatados. Feito na rua.</p>
+  </footer>
+
+  <!-- Busca -->
+  <div class="overlay" id="searchOverlay" hidden>
+    <div class="modal search-modal" role="dialog" aria-modal="true" aria-labelledby="searchTitle">
+      <button class="modal-close" data-close="searchOverlay" aria-label="Fechar">×</button>
+      <p class="eyebrow">BUSCA RÁPIDA</p>
+      <h2 id="searchTitle">O que você está procurando?</h2>
+      <input class="big-input" id="globalSearch" type="search" placeholder="Ex.: camiseta, cargo..." autofocus />
+      <div id="searchResults" class="search-results"></div>
+    </div>
+  </div>
+
+  <!-- Auth -->
+  <div class="overlay" id="authOverlay" hidden>
+    <div class="modal auth-modal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <button class="modal-close" data-close="authOverlay" aria-label="Fechar">×</button>
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-auth="login">ENTRAR</button>
+        <button class="auth-tab" data-auth="register">CRIAR CONTA</button>
+      </div>
+      <div id="loginPane">
+        <p class="eyebrow">BEM-VINDO DE VOLTA</p>
+        <h2 id="authTitle">Entrar na CLS.</h2>
+        <form id="loginForm" class="stack-form">
+          <input name="email" type="email" placeholder="E-mail" required />
+          <input name="password" type="password" placeholder="Senha" minlength="6" required />
+          <button class="btn btn-red" type="submit">ENTRAR</button>
+        </form>
+      </div>
+      <div id="registerPane" hidden>
+        <p class="eyebrow">PRIMEIRO PEDIDO?</p>
+        <h2>Crie seu acesso.</h2>
+        <form id="registerForm" class="stack-form">
+          <input name="name" type="text" placeholder="Nome completo" required />
+          <input name="email" type="email" placeholder="E-mail" required />
+          <input name="password" type="password" placeholder="Senha (mín. 6 caracteres)" minlength="6" required />
+          <button class="btn btn-red" type="submit">CRIAR CONTA</button>
+        </form>
+      </div>
+      <div id="authStatus" class="form-status" role="status"></div>
+    </div>
+  </div>
+
+  <!-- Cart -->
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Carrinho" aria-hidden="true">
+    <div class="cart-head">
+      <div>
+        <p class="eyebrow">SUA SACOLA</p>
+        <h2>Carrinho</h2>
+      </div>
+      <button class="modal-close" id="closeCart" aria-label="Fechar carrinho">×</button>
+    </div>
+    <div id="cartItems" class="cart-items"></div>
+    <div class="cart-footer">
+      <div class="cart-total"><span>Subtotal</span><strong id="cartTotal">R$ 0,00</strong></div>
+      <button class="btn btn-red full" id="checkoutBtn">IR PARA PAGAMENTO</button>
+      <button class="btn btn-outline full" id="clearCartBtn">ESVAZIAR CARRINHO</button>
+      <small>Pagamento demonstrativo. Nenhuma cobrança real é feita nesta versão.</small>
+    </div>
+  </aside>
+
+  <!-- Checkout -->
+  <div class="overlay" id="checkoutOverlay" hidden>
+    <div class="modal checkout-modal" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
+      <button class="modal-close" data-close="checkoutOverlay" aria-label="Fechar">×</button>
+      <p class="eyebrow">CHECKOUT</p>
+      <h2 id="checkoutTitle">Finalizar pedido.</h2>
+      <form id="checkoutForm" class="checkout-form">
+        <div class="checkout-summary" id="checkoutSummary"></div>
+        <div class="checkout-grid">
+          <input name="name" type="text" placeholder="Nome completo" required />
+          <input name="email" type="email" placeholder="E-mail" required />
+          <input name="zip" type="text" inputmode="numeric" placeholder="CEP" required />
+          <input name="address" type="text" placeholder="Endereço" required />
+          <input name="number" type="text" placeholder="Número" required />
+          <input name="city" type="text" placeholder="Cidade" required />
+          <select name="payment" required>
+            <option value="">Forma de pagamento</option>
+            <option>Pix</option>
+            <option>Cartão de crédito</option>
+            <option>Cartão de débito</option>
+          </select>
+          <input name="card" type="text" placeholder="Número do cartão (demo)" />
+        </div>
+        <button class="btn btn-red full" type="submit">CONFIRMAR PEDIDO</button>
+        <div id="checkoutStatus" class="form-status" role="status"></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="src/script.js"></script>
+</body>
+</html>
