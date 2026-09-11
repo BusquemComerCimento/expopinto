@@ -1,7 +1,4 @@
-CREATE DATABASE IF NOT EXISTS cls_enlatados
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
-
+CREATE DATABASE cls_enlatados
 USE cls_enlatados;
 
 CREATE TABLE users (
