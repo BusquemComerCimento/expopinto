@@ -4,10 +4,12 @@ import sqlite3
 from functools import wraps
 
 from flask import Flask, jsonify, request, send_from_directory, session
+from dotenv import load_dotenv
 from flask_cors import CORS
 from werkzeug.security import check_password_hash, generate_password_hash
 
 ROOT = Path(__file__).resolve().parents[1]
+load_dotenv(ROOT / ".env")
 DB_PATH = Path(os.getenv("DATABASE_PATH", ROOT / "bd" / "expopinto.db"))
 FRONTEND = ROOT / "frontend"
 
