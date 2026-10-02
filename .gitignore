@@ -1,8 +1,7 @@
-# Arquivo .gitignore
-# Ignorar o ambiente virtual do Python
 venv/
 .venv/
-# Ignorar arquivos temporários do Python e VS Code
 __pycache__/
 *.pyc
 .vscode/
+.env
+bd/*.db
