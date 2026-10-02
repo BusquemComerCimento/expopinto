@@ -91,7 +91,7 @@ def no_store_api(response):
 
 @app.get("/api/status")
 def status():
-    return jsonify({"status": "ok", "servico": "ExpoPinto API"})
+    return jsonify({"status": "ok", "servico": "CLS Enlatados API"})
 
 @app.post("/api/auth/register")
 def register():
