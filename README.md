@@ -1,6 +1,6 @@
-# ExpoPinto
+# CLS Enlatados
 
-Loja streetwear reconstruída como aplicação Flask + SQLite com frontend responsivo.
+Loja de streetwear CLS Enlatados, construída como aplicação Flask + SQLite com frontend responsivo.
 
 ## Stack
 Python / Flask, SQLite, HTML/CSS/JavaScript e Werkzeug para hash de senhas.
