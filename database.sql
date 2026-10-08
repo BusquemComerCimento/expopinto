@@ -1,5 +1,6 @@
 PRAGMA foreign_keys = ON;
 
+-- Usuários e suas informações de autenticação.
 CREATE TABLE
   IF NOT EXISTS usuarios (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -10,6 +11,7 @@ CREATE TABLE
     data_cadastro TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   );
 
+-- Categorias usadas para organizar o catálogo.
 CREATE TABLE
   IF NOT EXISTS categorias (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -18,6 +20,7 @@ CREATE TABLE
     ativo INTEGER NOT NULL DEFAULT 1 CHECK (ativo IN (0, 1))
   );
 
+-- Produtos, preços, imagens, estoque e status de publicação.
 CREATE TABLE
   IF NOT EXISTS produtos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -31,6 +34,7 @@ CREATE TABLE
     ativo INTEGER NOT NULL DEFAULT 1 CHECK (ativo IN (0, 1))
   );
 
+-- Pedidos vinculados aos usuários, com total, status e data.
 CREATE TABLE
   IF NOT EXISTS pedidos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,6 +44,7 @@ CREATE TABLE
     data_pedido TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   );
 
+-- Produtos que pertencem a cada pedido, com quantidade e preço no momento da compra.
 CREATE TABLE
   IF NOT EXISTS itens_pedido (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,6 +54,7 @@ CREATE TABLE
     preco_unitario INTEGER NOT NULL CHECK (preco_unitario >= 0)
   );
 
+-- Chamados enviados pelo formulário de suporte.
 CREATE TABLE
   IF NOT EXISTS tickets (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -62,8 +68,10 @@ CREATE TABLE
     criado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   );
 
+-- Índice para acelerar filtros por categoria.
 CREATE INDEX IF NOT EXISTS idx_produtos_categoria ON produtos (id_categoria);
 
+-- Índice para acelerar a consulta dos pedidos de um usuário.
 CREATE INDEX IF NOT EXISTS idx_pedidos_usuario ON pedidos (id_usuario);
 
 -- Catálogo oficial da CLS Enlatados.
