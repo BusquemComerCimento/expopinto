@@ -50,6 +50,7 @@ textarea {
 }
 
 /* Cabeçalho, navegação e ações da loja. */
+/* Cabeçalho e navegação principal do site. */
 .header {
   min-height: 78px;
   padding: 0 5vw;
@@ -138,6 +139,7 @@ textarea {
 
 /* Área principal da home e base do carrossel. */
 /* Área principal da página inicial e carrossel. */
+/* Área principal de destaque e apresentação da marca. */
 .hero {
   min-height: 100svh;
   width: 100%;
@@ -320,6 +322,7 @@ textarea {
 
 /* Grade reutilizada para os cards de produtos. */
 /* Grade utilizada para exibir os produtos. */
+/* Layout dos cards e da grade de produtos. */
 .products {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -418,6 +421,7 @@ textarea {
 
 /* Busca, filtro de categoria e ordenação. */
 /* Controles de busca, categoria e ordenação. */
+/* Controles de busca, categoria e ordenação do catálogo. */
 .catalog-controls {
   padding: 25px 5vw;
   display: grid;
@@ -436,6 +440,7 @@ textarea {
 }
 
 /* Layout da página individual do produto. */
+/* Estrutura visual da página de detalhes do produto. */
 .product-detail {
   padding: 80px 8vw;
   display: grid;
@@ -514,6 +519,7 @@ textarea {
 
 /* Tela de login/cadastro. */
 /* Layout das telas de login e cadastro. */
+/* Estilos das telas de login e cadastro. */
 .auth-page {
   min-height: 100vh;
   background: #171717;
@@ -572,6 +578,7 @@ textarea {
 }
 
 /* Painel lateral da sacola. */
+/* Painel lateral da sacola de compras. */
 .cart-panel {
   position: fixed;
   right: 0;
@@ -656,6 +663,7 @@ textarea {
 }
 
 /* Responsividade para telas menores. */
+/* Ajustes de responsividade para telas menores. */
 @media(max-width:850px) {
   .header {
     min-height: 72px
@@ -717,6 +725,7 @@ textarea {
 
   /* Rodapé e seus links. */
 /* Rodapé do site. */
+/* Rodapé e informações finais do site. */
 .footer {
     flex-direction: column
   }
