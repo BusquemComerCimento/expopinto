@@ -110,7 +110,7 @@ def register():
             return json_error("Este e-mail já está cadastrado.", 409)
         cur = conn.execute(
             "INSERT INTO usuarios (nome,email,senha) VALUES (?,?,?)",
-            (name, email, generate_password_hash(password)),
+            (name, email, password),
         )
         session["user_id"] = cur.lastrowid
         session["user_type"] = "cliente"
@@ -157,9 +157,9 @@ def products():
     category = request.args.get("categoria", "").strip()
     query = request.args.get("busca", "").strip()
     order = request.args.get("ordem", "recentes")
-    sql = """SELECT p.id,p.nome,p.descricao,p.preco,p.estoque,p.imagem,p.destaque,c.nome AS categoria
-             FROM produtos p JOIN categorias c ON c.id=p.id_categoria
-             WHERE p.ativo=1 AND c.ativo=1"""
+    sql = """SELECT p.id,p.nome,p.descricao,p.preco,p.estoque,p.imagem,p.destaque,p.ativo,c.nome AS categoria
+         FROM produtos p JOIN categorias c ON c.id=p.id_categoria
+         WHERE p.ativo=1 AND c.ativo=1"""
     params = []
     if category:
         sql += " AND c.nome=?"
