@@ -1,3 +1,4 @@
+-- As tabelas abaixo armazenam usuários, categorias, produtos, pedidos e suporte.
 PRAGMA foreign_keys = ON;
 
 -- Usuários e suas informações de autenticação.
