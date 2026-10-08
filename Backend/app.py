@@ -18,6 +18,7 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-only-change-me")
 app.config["JSON_SORT_KEYS"] = False
 CORS(app, supports_credentials=True)
 
+# Abre uma conexão com o banco SQLite e configura o retorno das consultas como linhas nomeadas.
 def db():
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(DB_PATH, timeout=10)
@@ -25,6 +26,7 @@ def db():
     conn.execute("PRAGMA foreign_keys = ON")
     return conn
 
+# Cria/atualiza as tabelas usando database.sql e popula dados iniciais quando necessário.
 def init_db():
     schema = (ROOT / "database.sql").read_text(encoding="utf-8")
     with db() as conn:
@@ -33,6 +35,7 @@ def init_db():
         if count == 0:
             seed(conn)
 
+# Insere categorias e produtos iniciais para o catálogo funcionar na primeira execução.
 def seed(conn):
     categories = [
         ("Camisetas", "Oversized, regular e peças gráficas."),
@@ -57,9 +60,11 @@ def seed(conn):
         products,
     )
 
+# Padroniza respostas de erro da API em JSON.
 def json_error(message, status=400):
     return jsonify({"erro": message}), status
 
+# Decorador que protege rotas que exigem um usuário autenticado.
 def user_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
@@ -68,6 +73,7 @@ def user_required(fn):
         return fn(*args, **kwargs)
     return wrapper
 
+# Decorador que restringe rotas a usuários com perfil administrativo.
 def admin_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
@@ -76,6 +82,7 @@ def admin_required(fn):
         return fn(*args, **kwargs)
     return wrapper
 
+# Converte uma linha do banco em um dicionário de produto pronto para a API.
 def product_dict(row):
     item = dict(row)
     item["preco"] = item["preco"] / 100
@@ -84,16 +91,19 @@ def product_dict(row):
     return item
 
 @app.after_request
+# Impede cache das respostas da API para que os dados exibidos estejam atualizados.
 def no_store_api(response):
     if request.path.startswith("/api/"):
         response.headers["Cache-Control"] = "no-store"
     return response
 
 @app.get("/api/status")
+# Endpoint usado para verificar se a API está funcionando.
 def status():
     return jsonify({"status": "ok", "servico": "CLS Enlatados API"})
 
 @app.post("/api/auth/register")
+# Valida os dados e cria uma nova conta de cliente.
 def register():
     data = request.get_json(silent=True)
     if not isinstance(data, dict):
@@ -117,6 +127,7 @@ def register():
     return jsonify({"usuario": {"id": cur.lastrowid, "nome": name, "email": email}}), 201
 
 @app.post("/api/auth/login")
+# Valida e-mail e senha e cria a sessão do usuário.
 def login():
     data = request.get_json(silent=True)
     if not isinstance(data, dict):
@@ -132,12 +143,14 @@ def login():
     return jsonify({"usuario": {"id": row["id"], "nome": row["nome"], "email": row["email"]}})
 
 @app.post("/api/auth/logout")
+# Encerra a sessão atual do usuário.
 def logout():
     session.clear()
     return jsonify({"ok": True})
 
 @app.get("/api/auth/me")
 @user_required
+# Retorna os dados do usuário autenticado.
 def me():
     with db() as conn:
         row = conn.execute("SELECT id,nome,email,tipo,data_cadastro FROM usuarios WHERE id=?", (session["user_id"],)).fetchone()
@@ -147,12 +160,14 @@ def me():
     return jsonify({"usuario": dict(row)})
 
 @app.get("/api/categorias")
+# Retorna as categorias ativas do catálogo.
 def categories():
     with db() as conn:
         rows = conn.execute("SELECT id,nome,descricao FROM categorias WHERE ativo=1 ORDER BY nome").fetchall()
     return jsonify([dict(r) for r in rows])
 
 @app.get("/api/produtos")
+# Consulta produtos aplicando busca, categoria e ordenação.
 def products():
     category = request.args.get("categoria", "").strip()
     query = request.args.get("busca", "").strip()
@@ -173,6 +188,7 @@ def products():
     return jsonify([product_dict(r) for r in rows])
 
 @app.get("/api/produtos/<int:product_id>")
+# Retorna os dados de um produto específico.
 def product(product_id):
     with db() as conn:
         row = conn.execute("""SELECT p.*, c.nome AS categoria FROM produtos p
@@ -183,6 +199,7 @@ def product(product_id):
     return jsonify(product_dict(row))
 
 @app.post("/api/suporte")
+# Recebe e salva um chamado enviado pelo formulário de suporte.
 def support():
     data = request.get_json(silent=True)
     if not isinstance(data, dict):
@@ -199,11 +216,13 @@ def support():
 
 @app.post("/api/pedidos")
 @user_required
+# Impede a criação direta: o pedido só nasce depois do pagamento demonstrativo.
 def create_order():
     return json_error("O pedido só pode ser criado após a aprovação do pagamento.", 409)
 
 @app.post("/api/pagamentos")
 @user_required
+# Simula o pagamento, cria o pedido, registra os itens e atualiza o estoque.
 def fake_payment():
     data = request.get_json(silent=True)
     if not isinstance(data, dict):
@@ -265,6 +284,7 @@ def fake_payment():
 
 @app.get("/api/pedidos")
 @user_required
+# Lista os pedidos pertencentes ao usuário autenticado.
 def orders():
     with db() as conn:
         rows = conn.execute("SELECT id,valor_total,status,data_pedido FROM pedidos WHERE id_usuario=? ORDER BY id DESC", (session["user_id"],)).fetchall()
@@ -272,6 +292,7 @@ def orders():
 
 @app.get("/api/pedidos/<int:order_id>")
 @user_required
+# Retorna os dados e itens de um pedido específico do usuário.
 def order_detail(order_id):
     with db() as conn:
         row = conn.execute(
@@ -305,20 +326,24 @@ def order_detail(order_id):
     })
 
 @app.get("/")
+# Entrega a página inicial da loja.
 def home():
     return send_from_directory(FRONTEND, "index.html")
 
 @app.get("/<page>")
+# Entrega uma das páginas HTML permitidas pelo backend.
 def pages(page):
     if page in {"catalogo", "sobre", "suporte", "login", "cadastro", "conta", "pagamento", "pedido"}:
         return send_from_directory(FRONTEND, f"{page}.html")
     return json_error("Página não encontrada.", 404)
 
 @app.get("/produto/<int:product_id>")
+# Entrega o template da página de produto; os dados são carregados pelo JavaScript.
 def product_page(product_id):
     return send_from_directory(FRONTEND, "produto.html")
 
 @app.get("/assets/<path:filename>")
+# Serve imagens e outros arquivos estáticos da pasta de assets.
 def assets(filename):
     return send_from_directory(FRONTEND / "assets", filename)
 
