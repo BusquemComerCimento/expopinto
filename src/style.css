@@ -1,3 +1,6 @@
+/* FOLHA DE ESTILOS DA CLS ENLATADOS
+ * Define cores, tipografia, layout, componentes e responsividade do site.
+ */
 :root {
   --b: #111;
   --c: #eee8dc;
@@ -45,6 +48,7 @@ textarea {
   color: var(--r)
 }
 
+/* Cabeçalho, navegação e ações da loja. */
 .header {
   min-height: 78px;
   padding: 0 5vw;
@@ -131,6 +135,7 @@ textarea {
   letter-spacing: .15em
 }
 
+/* Área principal da home e base do carrossel. */
 .hero {
   min-height: 100svh;
   width: 100%;
@@ -311,6 +316,7 @@ textarea {
   margin: 8px 0
 }
 
+/* Grade reutilizada para os cards de produtos. */
 .products {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -372,6 +378,7 @@ textarea {
   cursor: pointer
 }
 
+/* Bloco institucional da página inicial. */
 .campaign {
   padding: 90px 5vw;
   background: #111;
@@ -406,6 +413,7 @@ textarea {
   margin: 12px 0 22px
 }
 
+/* Busca, filtro de categoria e ordenação. */
 .catalog-controls {
   padding: 25px 5vw;
   display: grid;
@@ -423,6 +431,7 @@ textarea {
   background: #f7f1e8
 }
 
+/* Layout da página individual do produto. */
 .product-detail {
   padding: 80px 8vw;
   display: grid;
@@ -453,6 +462,7 @@ textarea {
   color: #5e5952
 }
 
+/* Seção principal da página Sobre. */
 .story {
   background: #171717;
   color: var(--c)
@@ -498,6 +508,7 @@ textarea {
   font-weight: 800
 }
 
+/* Tela de login/cadastro. */
 .auth-page {
   min-height: 100vh;
   background: #171717;
@@ -555,6 +566,7 @@ textarea {
   text-align: right
 }
 
+/* Painel lateral da sacola. */
 .cart-panel {
   position: fixed;
   right: 0;
@@ -638,6 +650,7 @@ textarea {
   transform: translate(-50%, 0)
 }
 
+/* Responsividade para telas menores. */
 @media(max-width:850px) {
   .header {
     min-height: 72px
@@ -697,7 +710,8 @@ textarea {
     grid-template-columns: 1fr
   }
 
-  .footer {
+  /* Rodapé e seus links. */
+.footer {
     flex-direction: column
   }
 
@@ -777,6 +791,7 @@ textarea {
   display: inline-block
 }
 
+/* Área de participantes do projeto. */
 .about-section {
   padding: 5rem 2rem;
   max-width: 1400px;
@@ -882,6 +897,7 @@ textarea {
   transform: scale(1.3) rotate(10deg);
 }
 
+/* Estilos do checkout demonstrativo e confirmação do pedido. */
 /* Checkout / pagamento demonstrativo */
 .payment-page,.order-page{
   max-width:1180px;margin:0 auto;padding:90px 28px;min-height:calc(100vh - 82px)
