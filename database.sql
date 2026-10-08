@@ -1,3 +1,6 @@
+-- DOCUMENTAÇÃO: Este arquivo define a estrutura do banco SQLite usado pelo site CLS Enlatados.
+-- As tabelas armazenam usuários, categorias, produtos, pedidos, itens dos pedidos e chamados de suporte.
+
 -- As tabelas abaixo armazenam usuários, categorias, produtos, pedidos e suporte.
 PRAGMA foreign_keys = ON;
 
@@ -70,6 +73,7 @@ CREATE TABLE
   );
 
 -- Índice para acelerar filtros por categoria.
+-- Índice para acelerar consultas frequentes no banco.
 CREATE INDEX IF NOT EXISTS idx_produtos_categoria ON produtos (id_categoria);
 
 -- Índice para acelerar a consulta dos pedidos de um usuário.
