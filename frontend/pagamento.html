@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pagamento — CLS Enlatados</title>
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+<header class="header">
+  <a class="logo" href="/">CLS <span>ENLATADOS</span></a>
+  <nav><a href="/">Início</a><a href="/catalogo">Catálogo</a><a href="/sobre">Sobre</a><a href="/suporte">Suporte</a></nav>
+  <div class="header-actions"><a href="/conta">CONTA</a><button class="menu" data-menu>☰</button></div>
+</header>
+
+<main class="payment-page" data-payment-page>
+  <section class="payment-card">
+    <div>
+      <p class="kicker">CLS ENLATADOS / CHECKOUT</p>
+      <h1>FAZ O<br><em>PAGAMENTO.</em></h1>
+      <p class="payment-note">Pagamento demonstrativo para o projeto. Nenhum valor real será cobrado e nenhum dado financeiro é armazenado.</p>
+
+      <form class="form payment-form" data-payment-form>
+        <label>Forma de pagamento</label>
+        <div class="payment-methods">
+          <label><input type="radio" name="metodo" value="pix"> PIX</label>
+          <label><input type="radio" name="metodo" value="cartao"> Cartão</label>
+        </div>
+
+        <div data-card-fields hidden>
+          <input name="numero" inputmode="numeric" placeholder="Número do cartão (fictício)" maxlength="19">
+          <div class="form-row">
+            <input name="validade" placeholder="Validade" maxlength="5">
+            <input name="cvv" inputmode="numeric" placeholder="CVV" maxlength="4">
+          </div>
+          <input name="titular" placeholder="Nome do titular">
+        </div>
+
+        <p class="payment-demo">MODO DEMO — os dados acima são usados apenas para simular a tela.</p>
+        <button class="button red" type="submit">PAGAR E CRIAR PEDIDO</button>
+        <p class="form-message" data-form-message></p>
+      </form>
+    </div>
+
+    <aside class="payment-summary">
+      <p class="kicker">RESUMO</p>
+      <div data-payment-summary></div>
+    </aside>
+  </section>
+</main>
+
+<script src="/src/script.js"></script>
+</body>
+</html>
