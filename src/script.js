@@ -72,11 +72,63 @@ function cartPanel(){
 async function checkout(){
   try{
     await api("/auth/me");
-    await api("/pedidos",{method:"POST",body:JSON.stringify({itens:cart.map(x=>({produto_id:x.id,quantidade:x.qty}))})});
-    cart=[];save();toast("Pedido criado.");setTimeout(()=>location.href="/conta",600);
+    if(!cart.length)return toast("Sua sacola está vazia.");
+    location.href="/pagamento";
   }catch(e){
     if(e.message.includes("login")||e.message.includes("Faça login"))location.href="/login";else toast(e.message);
   }
+}
+
+function paymentPage(){
+  const box=$("[data-payment-page]");
+  if(!box)return;
+  if(!cart.length){
+    box.innerHTML=`<div class="empty-payment"><p class="kicker">CLS ENLATADOS / PAGAMENTO</p><h1>SACOLA<br><em>VAZIA.</em></h1><a class="button red" href="/catalogo">VOLTAR AO CATÁLOGO</a></div>`;
+    return;
+  }
+
+  const total=cart.reduce((a,x)=>a+x.preco*x.qty,0);
+  const summary=$("[data-payment-summary]");
+  if(summary)summary.innerHTML=cart.map(x=>`
+    <div class="payment-line">
+      <span>${x.nome} × ${x.qty}</span>
+      <strong>${money(x.preco*x.qty)}</strong>
+    </div>`).join("")+`<div class="payment-total"><span>Total</span><strong>${money(total)}</strong></div>`;
+
+  const toggle=()=>{
+    const method=$("input[name='metodo']:checked")?.value;
+    const card=$("[data-card-fields]");
+    if(card)card.hidden=method!=="cartao";
+  };
+  $("input[name='metodo']").forEach(x=>x.addEventListener("change",toggle));
+  toggle();
+}
+
+function orderPage(){
+  const box=$("[data-order-page]");
+  if(!box)return;
+  const id=new URLSearchParams(location.search).get("id");
+  if(!id){box.innerHTML="<h1>Pedido não encontrado.</h1>";return;}
+
+  api("/pedidos/"+id).then(o=>{
+    box.innerHTML=`
+      <div class="order-success">
+        <p class="kicker">CLS ENLATADOS / PEDIDO CONFIRMADO</p>
+        <h1>PEDIDO<br><em>#${o.id}</em></h1>
+        <p>Pagamento aprovado. Seu pedido foi criado e já está registrado na sua conta.</p>
+        <div class="order-summary">
+          ${o.itens.map(i=>`<div class="payment-line"><span>${i.nome} × ${i.quantidade}</span><strong>${money(i.preco_unitario*i.quantidade)}</strong></div>`).join("")}
+          <div class="payment-total"><span>Total</span><strong>${money(o.valor_total)}</strong></div>
+          <p class="order-status">STATUS: ${o.status.toUpperCase()}</p>
+        </div>
+        <div class="actions">
+          <a class="button red" href="/conta">VER MEUS PEDIDOS</a>
+          <a class="button" href="/catalogo">CONTINUAR COMPRANDO</a>
+        </div>
+      </div>`;
+  }).catch(e=>{
+    box.innerHTML=`<div class="empty-payment"><h1>OPS.</h1><p>${e.message}</p><a class="button red" href="/conta">IR PARA MINHA CONTA</a></div>`;
+  });
 }
 function carousel(){
   const ss=$$(".hero-slide");if(!ss.length)return;
@@ -121,11 +173,30 @@ document.addEventListener("submit",async e=>{
     try{await api("/suporte",{method:"POST",body:JSON.stringify(Object.fromEntries(new FormData(f)))});f.reset();msg(f,"Chamado enviado.")}
     catch(x){msg(f,x.message)}
   }
+  if(f.matches("[data-payment-form]")){
+    e.preventDefault();
+    const method=f.querySelector("input[name='metodo']:checked")?.value;
+    if(!method)return msg(f,"Escolha uma forma de pagamento.");
+
+    const data={
+      metodo:method,
+      itens:cart.map(x=>({produto_id:x.id,quantidade:x.qty}))
+    };
+
+    try{
+      const result=await api("/pagamentos",{
+        method:"POST",
+        body:JSON.stringify(data)
+      });
+      cart=[];save();
+      location.href="/pedido?id="+result.id;
+    }catch(x){msg(f,x.message)}
+  }
 });
 document.addEventListener("input",e=>e.target.matches("[data-search]")&&catalog());
 document.addEventListener("change",e=>e.target.matches("[data-category],[data-order]")&&catalog());
 (async()=>{
-  updateCount();carousel();featured();categories();catalog();product();
+  updateCount();carousel();featured();categories();catalog();product();paymentPage();orderPage();
   const o=$("[data-orders]");
   if(o)try{
     const m=await api("/auth/me"),os=await api("/pedidos");
