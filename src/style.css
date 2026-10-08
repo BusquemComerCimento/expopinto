@@ -1,3 +1,4 @@
+/* DOCUMENTAÇÃO: Este arquivo controla a aparência, layout, componentes e responsividade do site CLS Enlatados. */
 /* FOLHA DE ESTILOS DA CLS ENLATADOS
  * Define cores, tipografia, layout, componentes e responsividade do site.
  */
@@ -136,6 +137,7 @@ textarea {
 }
 
 /* Área principal da home e base do carrossel. */
+/* Área principal da página inicial e carrossel. */
 .hero {
   min-height: 100svh;
   width: 100%;
@@ -317,6 +319,7 @@ textarea {
 }
 
 /* Grade reutilizada para os cards de produtos. */
+/* Grade utilizada para exibir os produtos. */
 .products {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -414,6 +417,7 @@ textarea {
 }
 
 /* Busca, filtro de categoria e ordenação. */
+/* Controles de busca, categoria e ordenação. */
 .catalog-controls {
   padding: 25px 5vw;
   display: grid;
@@ -509,6 +513,7 @@ textarea {
 }
 
 /* Tela de login/cadastro. */
+/* Layout das telas de login e cadastro. */
 .auth-page {
   min-height: 100vh;
   background: #171717;
@@ -711,6 +716,7 @@ textarea {
   }
 
   /* Rodapé e seus links. */
+/* Rodapé do site. */
 .footer {
     flex-direction: column
   }
