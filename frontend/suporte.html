@@ -1,3 +1,45 @@
 <!doctype html>
 <!-- DOCUMENTAÇÃO: Esta página define a estrutura HTML da tela. O CSS controla a aparência e o JavaScript controla as interações. -->
-<!-- SUPORTE.HTML — Estrutura da tela. O CSS define a aparência e o JavaScript adiciona interações e comunicação com a API. --><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Suporte — CLS Enlatados</title><link rel="stylesheet" href="/src/style.css"></head><body><header class="header"><a class="logo" href="/">CLS <span>ENLATADOS</span></a><nav><a href="/">Início</a><a href="/catalogo">Catálogo</a><a href="/sobre">Sobre</a><a class="active" href="/suporte">Suporte</a></nav><div class="header-actions"><a href="/conta">CONTA</a><button class="cart-trigger" data-cart-open>SACOLA <b data-cart-count>0</b></button><button class="menu" data-menu>☰</button></div></header><main><section class="support"><div><p class="kicker">CLS ENLATADOS / SUPORTE</p><h1>DEU RUIM?<br><em>MANDA AQUI.</em></h1><p>Pedido, troca, tamanho ou problema no site. Conta o que aconteceu e a gente recebe o chamado.</p></div><form class="form" data-support-form><input name="nome" placeholder="Seu nome" required><input name="email" type="email" placeholder="Seu e-mail" required><select name="categoria" required><option value="">Categoria</option><option>Pedido</option><option>Troca</option><option>Tamanho</option><option>Site</option><option>Outro</option></select><input name="assunto" placeholder="Assunto" required><textarea name="mensagem" rows="7" placeholder="Conta o que aconteceu..." required></textarea><button class="button red">ENVIAR CHAMADO</button><p class="form-message" data-form-message></p></form></section></main><script src="/src/script.js"></script></body></html>
+<!-- SUPORTE.HTML — Estrutura da tela. O CSS define a aparência e o JavaScript adiciona interações e comunicação com a API. -->
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Suporte — CLS Enlatados</title>
+    <link rel="stylesheet" href="/src/style.css">
+</head>
+
+<body>
+    <header class="header"><a class="logo" href="/">CLS <span>ENLATADOS</span></a>
+        <nav><a href="/">Início</a><a href="/catalogo">Catálogo</a><a href="/sobre">Sobre</a><a class="active"
+                href="/suporte">Suporte</a></nav>
+        <div class="header-actions"><a href="/conta">CONTA</a><button class="cart-trigger" data-cart-open>SACOLA <b
+                    data-cart-count>0</b></button><button class="menu" data-menu>☰</button></div>
+    </header>
+    <main>
+        <section class="support">
+            <div>
+                <p class="kicker">CLS ENLATADOS / SUPORTE</p>
+                <h1>DEU RUIM?<br><em>PROBLEMA SEU.</em></h1>
+                <p>Pedido, troca, tamanho ou problema no site. Conta o que aconteceu e a gente recebe o chamado.</p>
+            </div>
+            <form class="form" data-support-form><input name="nome" placeholder="Seu nome" required><input name="email"
+                    type="email" placeholder="Seu e-mail" required><select name="categoria" required>
+                    <option value="">Categoria</option>
+                    <option>Pedido</option>
+                    <option>Troca</option>
+                    <option>Tamanho</option>
+                    <option>Site</option>
+                    <option>Outro</option>
+                </select><input name="assunto" placeholder="Assunto" required><textarea name="mensagem" rows="7"
+                    placeholder="Conta o que aconteceu..." required></textarea><button class="button red">ENVIAR
+                    CHAMADO</button>
+                <p class="form-message" data-form-message></p>
+            </form>
+        </section>
+    </main>
+    <script src="/src/script.js"></script>
+</body>
+
+</html>
