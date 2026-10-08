@@ -10,17 +10,21 @@ const $=(s,r=document)=>r.querySelector(s);
 // Atalho para selecionar todos os elementos de um seletor CSS.
 const $=(s,r=document)=>[...r.querySelectorAll(s)];
 // Recupera a sacola salva no navegador.
+// Recupera a sacola salva no navegador ou começa com uma sacola vazia.
 let cart=JSON.parse(localStorage.getItem("cls_cart")||"[]");
 // Guarda o slide atual do carrossel.
+// Guarda o índice do slide atualmente exibido no carrossel.
 let slide=0;
 // Salva a sacola e atualiza seu contador.
 // Salva a sacola e atualiza o contador.
 const save=()=>{localStorage.setItem("cls_cart",JSON.stringify(cart));updateCount()};
 // Atualiza a quantidade total de itens exibida no cabeçalho.
 // Atualiza a quantidade de itens mostrada na interface.
+// Atualiza o contador de produtos da sacola no cabeçalho.
 function updateCount(){$$("[data-cart-count]").forEach(e=>e.textContent=cart.reduce((a,x)=>a+x.qty,0))}
 // Centraliza requisições à API e tratamento de erros.
 // Centraliza as chamadas à API e o tratamento de erros.
+// Centraliza as requisições ao backend e trata respostas de erro.
 async function api(path,opt={}){
   const r=await fetch(API+path,{credentials:"same-origin",headers:{"Content-Type":"application/json"},...opt});
   let d={};try{d=await r.json()}catch{}
@@ -29,6 +33,7 @@ async function api(path,opt={}){
 }
 // Monta o HTML visual de um produto.
 // Monta o HTML de um card de produto.
+// Monta o HTML visual de um card de produto.
 function card(p){
   return `<article class="product-card">
     <a href="/produto/${p.id}">
@@ -40,6 +45,7 @@ function card(p){
 }
 // Busca produtos usando os filtros atuais do catálogo.
 // Carrega o catálogo usando os filtros escolhidos.
+// Carrega o catálogo e aplica os filtros escolhidos pelo visitante.
 async function catalog(){
   const box=$("[data-catalog]");if(!box)return;
   const params=new URLSearchParams({
@@ -52,6 +58,7 @@ async function catalog(){
 }
 // Carrega os produtos marcados como destaque.
 // Carrega os produtos destacados na página inicial.
+// Carrega e exibe os produtos destacados na página inicial.
 async function featured(){
   const box=$("[data-featured]");if(!box)return;
   const p=await api("/produtos?ordem=recentes");
@@ -59,12 +66,14 @@ async function featured(){
 }
 // Carrega categorias da API para o filtro do catálogo.
 // Carrega as categorias usadas no filtro.
+// Carrega as categorias do backend e preenche os filtros do catálogo.
 async function categories(){
   const s=$("[data-category]");if(!s)return;
   (await api("/categorias")).forEach(c=>s.insertAdjacentHTML("beforeend",`<option>${c.nome}</option>`));
 }
 // Carrega e monta a página de detalhes de um produto.
 // Carrega os detalhes do produto atual.
+// Carrega os dados e monta a página de detalhes de um produto.
 async function product(){
   const box=$("[data-product-detail]");if(!box)return;
   try{
@@ -84,12 +93,14 @@ async function add(id){
 }
 // Mostra uma mensagem temporária na tela.
 // Mostra uma mensagem temporária para o usuário.
+// Exibe uma mensagem temporária para informar o usuário sobre uma ação.
 function toast(t){
   let e=$(".toast");if(!e){e=document.createElement("div");e.className="toast";document.body.append(e)}
   e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),2200);
 }
 // Cria o painel lateral da sacola e seus controles.
 // Monta o painel lateral da sacola.
+// Monta e atualiza o painel lateral da sacola de compras.
 function cartPanel(){
   if($(".cart-panel"))return;
   const e=document.createElement("aside");e.className="cart-panel";
@@ -101,6 +112,7 @@ function cartPanel(){
 }
 // Confere o login e encaminha para o pagamento sem criar o pedido ainda.
 // Confere o login e encaminha para o pagamento.
+// Verifica login e sacola antes de levar o usuário para o pagamento.
 async function checkout(){
   try{
     await api("/auth/me");
@@ -168,6 +180,7 @@ function orderPage(){
 }
 // Controla slides, indicadores, botões e troca automática do carrossel.
 // Controla o carrossel e a troca automática de slides.
+// Controla slides, indicadores e troca automática do carrossel.
 function carousel(){
   const ss=$$(".hero-slide");if(!ss.length)return;
   const d=$("[data-dots]");
