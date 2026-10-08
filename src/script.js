@@ -1,17 +1,27 @@
+// URL base usada nas chamadas ao backend.
 const API="/api";
+// Formata números como moeda brasileira.
 const money=v=>Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+// Atalho para selecionar o primeiro elemento de um seletor CSS.
 const $=(s,r=document)=>r.querySelector(s);
-const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+// Atalho para selecionar todos os elementos de um seletor CSS.
+const $=(s,r=document)=>[...r.querySelectorAll(s)];
+// Recupera a sacola salva no navegador.
 let cart=JSON.parse(localStorage.getItem("cls_cart")||"[]");
+// Guarda o slide atual do carrossel.
 let slide=0;
+// Salva a sacola e atualiza seu contador.
 const save=()=>{localStorage.setItem("cls_cart",JSON.stringify(cart));updateCount()};
+// Atualiza a quantidade total de itens exibida no cabeçalho.
 function updateCount(){$$("[data-cart-count]").forEach(e=>e.textContent=cart.reduce((a,x)=>a+x.qty,0))}
+// Centraliza requisições à API e tratamento de erros.
 async function api(path,opt={}){
   const r=await fetch(API+path,{credentials:"same-origin",headers:{"Content-Type":"application/json"},...opt});
   let d={};try{d=await r.json()}catch{}
   if(!r.ok)throw Error(d.erro||"Não foi possível concluir.");
   return d;
 }
+// Monta o HTML visual de um produto.
 function card(p){
   return `<article class="product-card">
     <a href="/produto/${p.id}">
@@ -21,6 +31,7 @@ function card(p){
     <button class="add" data-add="${p.id}">ADICIONAR À SACOLA</button>
   </article>`;
 }
+// Busca produtos usando os filtros atuais do catálogo.
 async function catalog(){
   const box=$("[data-catalog]");if(!box)return;
   const params=new URLSearchParams({
@@ -31,15 +42,18 @@ async function catalog(){
   const p=await api("/produtos?"+params);
   box.innerHTML=p.length?p.map(card).join(""):"<p>Nenhuma peça encontrada.</p>";
 }
+// Carrega os produtos marcados como destaque.
 async function featured(){
   const box=$("[data-featured]");if(!box)return;
   const p=await api("/produtos?ordem=recentes");
   box.innerHTML=p.filter(x=>x.destaque).slice(0,4).map(card).join("");
 }
+// Carrega categorias da API para o filtro do catálogo.
 async function categories(){
   const s=$("[data-category]");if(!s)return;
   (await api("/categorias")).forEach(c=>s.insertAdjacentHTML("beforeend",`<option>${c.nome}</option>`));
 }
+// Carrega e monta a página de detalhes de um produto.
 async function product(){
   const box=$("[data-product-detail]");if(!box)return;
   try{
@@ -51,15 +65,18 @@ async function product(){
     <button class="button red" data-add="${p.id}" ${p.disponivel?"":"disabled"}>ADICIONAR À SACOLA</button></div>`;
   }catch{box.innerHTML="<h1>Produto não encontrado.</h1>"}
 }
+// Adiciona um produto à sacola ou aumenta sua quantidade.
 async function add(id){
   const p=await api("/produtos/"+id),x=cart.find(i=>i.id===id);
   x?x.qty++:cart.push({id,nome:p.nome,preco:p.preco,imagem:p.imagem,qty:1});
   save();toast(p.nome+" entrou na sacola.");
 }
+// Mostra uma mensagem temporária na tela.
 function toast(t){
   let e=$(".toast");if(!e){e=document.createElement("div");e.className="toast";document.body.append(e)}
   e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),2200);
 }
+// Cria o painel lateral da sacola e seus controles.
 function cartPanel(){
   if($(".cart-panel"))return;
   const e=document.createElement("aside");e.className="cart-panel";
@@ -69,6 +86,7 @@ function cartPanel(){
   <button class="button red full" data-checkout ${cart.length?"":"disabled"}>FINALIZAR PEDIDO</button>`;
   document.body.append(e);
 }
+// Confere o login e encaminha para o pagamento sem criar o pedido ainda.
 async function checkout(){
   try{
     await api("/auth/me");
@@ -79,6 +97,7 @@ async function checkout(){
   }
 }
 
+// Monta o resumo do checkout e alterna os campos do cartão.
 function paymentPage(){
   const box=$("[data-payment-page]");
   if(!box)return;
@@ -104,6 +123,7 @@ function paymentPage(){
   toggle();
 }
 
+// Consulta e exibe o pedido criado após o pagamento.
 function orderPage(){
   const box=$("[data-order-page]");
   if(!box)return;
@@ -130,6 +150,7 @@ function orderPage(){
     box.innerHTML=`<div class="empty-payment"><h1>OPS.</h1><p>${e.message}</p><a class="button red" href="/conta">IR PARA MINHA CONTA</a></div>`;
   });
 }
+// Controla slides, indicadores, botões e troca automática do carrossel.
 function carousel(){
   const ss=$$(".hero-slide");if(!ss.length)return;
   const d=$("[data-dots]");
@@ -144,7 +165,9 @@ function carousel(){
   $$("[data-slide]").forEach((b,i)=>b.onclick=()=>show(i));
   setInterval(()=>show((slide+1)%ss.length),5000);
 }
+// Exibe mensagens de retorno abaixo dos formulários.
 const msg=(f,t)=>{const e=$("[data-form-message]",f);if(e)e.textContent=t};
+// Centraliza os eventos de clique da interface.
 document.addEventListener("click",async e=>{
   if(e.target.closest("[data-menu]"))$("nav")?.classList.toggle("open");
   if(e.target.closest("[data-cart-open]"))cartPanel();
@@ -155,6 +178,7 @@ document.addEventListener("click",async e=>{
   if(e.target.closest("[data-checkout]"))await checkout();
   if(e.target.closest("[data-logout]")){await api("/auth/logout",{method:"POST"});location.href="/"}
 });
+// Processa os formulários sem recarregar as páginas.
 document.addEventListener("submit",async e=>{
   const f=e.target;
   if(f.matches("[data-login-form]")){
@@ -193,8 +217,11 @@ document.addEventListener("submit",async e=>{
     }catch(x){msg(f,x.message)}
   }
 });
+// Atualiza a busca conforme o usuário digita.
 document.addEventListener("input",e=>e.target.matches("[data-search]")&&catalog());
+// Recarrega o catálogo quando os filtros mudam.
 document.addEventListener("change",e=>e.target.matches("[data-category],[data-order]")&&catalog());
+// Inicializa os recursos necessários para a página atual.
 (async()=>{
   updateCount();carousel();featured();categories();catalog();product();paymentPage();orderPage();
   const o=$("[data-orders]");
