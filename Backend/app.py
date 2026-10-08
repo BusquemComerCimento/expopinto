@@ -200,10 +200,22 @@ def support():
 @app.post("/api/pedidos")
 @user_required
 def create_order():
+    return json_error("O pedido só pode ser criado após a aprovação do pagamento.", 409)
+
+@app.post("/api/pagamentos")
+@user_required
+def fake_payment():
     data = request.get_json(silent=True)
-    items = data.get("itens") if isinstance(data, dict) else None
+    if not isinstance(data, dict):
+        return json_error("Envie um JSON válido.")
+
+    method = str(data.get("metodo", "")).strip().lower()
+    items = data.get("itens")
+    if method not in {"pix", "cartao"}:
+        return json_error("Escolha uma forma de pagamento válida.")
     if not isinstance(items, list) or not items:
         return json_error("A sacola está vazia.")
+
     with db() as conn:
         total = 0
         normalized = []
@@ -211,22 +223,45 @@ def create_order():
             try:
                 pid, qty = int(item["produto_id"]), int(item["quantidade"])
             except (KeyError, TypeError, ValueError):
-                return json_error("Item de pedido inválido.")
+                return json_error("Item de pagamento inválido.")
             if qty < 1:
                 return json_error("Quantidade inválida.")
-            row = conn.execute("SELECT id,nome,preco,estoque FROM produtos WHERE id=? AND ativo=1", (pid,)).fetchone()
+
+            row = conn.execute(
+                "SELECT id,nome,preco,estoque FROM produtos WHERE id=? AND ativo=1",
+                (pid,),
+            ).fetchone()
             if not row:
                 return json_error("Produto não encontrado.", 404)
             if row["estoque"] < qty:
                 return json_error(f"Estoque insuficiente para {row['nome']}.", 409)
+
             total += row["preco"] * qty
             normalized.append((row["id"], qty, row["preco"]))
-        cur = conn.execute("INSERT INTO pedidos (id_usuario,valor_total,status) VALUES (?,?,?)", (session["user_id"], total, "pendente"))
+
+        # Pagamento 100% fictício: nenhum dado financeiro é armazenado.
+        cur = conn.execute(
+            "INSERT INTO pedidos (id_usuario,valor_total,status) VALUES (?,?,?)",
+            (session["user_id"], total, "pago"),
+        )
         order_id = cur.lastrowid
+
         for pid, qty, price in normalized:
-            conn.execute("INSERT INTO itens_pedido (id_pedido,id_produto,quantidade,preco_unitario) VALUES (?,?,?,?)", (order_id,pid,qty,price))
-            conn.execute("UPDATE produtos SET estoque=estoque-? WHERE id=?", (qty,pid))
-    return jsonify({"id": order_id, "total": total / 100, "status": "pendente"}), 201
+            conn.execute(
+                "INSERT INTO itens_pedido (id_pedido,id_produto,quantidade,preco_unitario) VALUES (?,?,?,?)",
+                (order_id, pid, qty, price),
+            )
+            conn.execute(
+                "UPDATE produtos SET estoque=estoque-? WHERE id=?",
+                (qty, pid),
+            )
+
+    return jsonify({
+        "id": order_id,
+        "total": total / 100,
+        "status": "pago",
+        "pagamento": "aprovado",
+    }), 201
 
 @app.get("/api/pedidos")
 @user_required
@@ -235,13 +270,47 @@ def orders():
         rows = conn.execute("SELECT id,valor_total,status,data_pedido FROM pedidos WHERE id_usuario=? ORDER BY id DESC", (session["user_id"],)).fetchall()
     return jsonify([{**dict(r), "valor_total": r["valor_total"] / 100} for r in rows])
 
+@app.get("/api/pedidos/<int:order_id>")
+@user_required
+def order_detail(order_id):
+    with db() as conn:
+        row = conn.execute(
+            "SELECT id,valor_total,status,data_pedido FROM pedidos WHERE id=? AND id_usuario=?",
+            (order_id, session["user_id"]),
+        ).fetchone()
+        if not row:
+            return json_error("Pedido não encontrado.", 404)
+
+        items = conn.execute(
+            """SELECT i.quantidade, i.preco_unitario, p.nome, p.imagem
+               FROM itens_pedido i
+               JOIN produtos p ON p.id=i.id_produto
+               WHERE i.id_pedido=?
+               ORDER BY i.id""",
+            (order_id,),
+        ).fetchall()
+
+    return jsonify({
+        "id": row["id"],
+        "valor_total": row["valor_total"] / 100,
+        "status": row["status"],
+        "data_pedido": row["data_pedido"],
+        "itens": [
+            {
+                **dict(item),
+                "preco_unitario": item["preco_unitario"] / 100,
+            }
+            for item in items
+        ],
+    })
+
 @app.get("/")
 def home():
     return send_from_directory(FRONTEND, "index.html")
 
 @app.get("/<page>")
 def pages(page):
-    if page in {"catalogo", "sobre", "suporte", "login", "cadastro", "conta"}:
+    if page in {"catalogo", "sobre", "suporte", "login", "cadastro", "conta", "pagamento", "pedido"}:
         return send_from_directory(FRONTEND, f"{page}.html")
     return json_error("Página não encontrada.", 404)
 
